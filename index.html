@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>커피 하우스</title>
+  <style>
+    @font-face {
+        font-family: 'KyoboHandwriting2020ParkDoYeon';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2112@1.0/KyoboHandwriting2020A.woff') format('woff');
+        font-weight: normal;
+        font-display: swap;
+    }
+
+    :root {
+      --bg-warm: #e1d3c1;
+      --bg-accent: #ede4d8;
+      --point-green: #d4dfc3;
+      --leaf-green: #688e5b;
+      --leaf-dark: #4a6b40;
+      --menu-bg: #fffaf0; 
+      --light-glow: rgba(255, 204, 0, 0.12);
+      --font-dark: #4b4b4b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body, html {
+      width: 100vw; height: 100vh;
+      background-color: var(--bg-warm);
+      font-family: 'KyoboHandwriting2020ParkDoYeon', sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* 🎨 무테 디자인: 테두리 제거 및 배경색 의존 */
+    .hand-drawn { background-color: var(--bg-accent); }
+    .hand-drawn-box {
+      position: relative; z-index: 1; 
+      background: var(--box-bg, var(--bg-accent));
+      border-radius: var(--box-radius, 8px);
+      box-shadow: 2px 4px 12px rgba(0,0,0,0.06);
+    }
+
+    /* 📦 최상위 컨테이너 */
+    #cafe-container {
+      position: relative; width: 100vw; height: 100vh; overflow: hidden;
+    }
+
+    .botanical {
+      position: absolute; background-size: contain; background-repeat: no-repeat;
+      pointer-events: none; z-index: 25;
+      filter: drop-shadow(4px 5px 3px rgba(0,0,0,0.08));
+    }
+    
+    .floor-plant-left {
+      left: -8vw; bottom: -10vh; 
+      width: 40vw; max-width: 550px; height: 65vh;
+      background-position: bottom left;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-20 -10 280 300'><path d='M60 280 L140 280 L150 200 L50 200 Z' fill='%23d0d5d9'/><path d='M53 220 L147 220 M55 240 L145 240 M58 260 L142 260' stroke='%23ffffff' stroke-width='2'/><path d='M100 200 Q70 100 40 80 M100 200 Q100 80 100 30 M100 200 Q140 120 170 90 M100 200 Q60 160 30 180 M100 200 Q150 170 170 160' fill='none' stroke='%234a6b40' stroke-width='3'/><path d='M100 30 C70 10 50 20 40 50 C50 60 70 50 80 60 C60 70 50 80 60 90 C80 80 90 90 100 100 C110 90 120 80 140 90 C150 80 140 70 120 60 C130 50 150 60 160 50 C150 20 130 10 100 30 Z' fill='%237ba372'/><path d='M40 80 C10 70 -10 90 0 120 C10 130 30 120 40 130 C20 140 10 150 20 160 C40 150 50 160 60 170 C70 160 80 150 100 160 C110 150 100 140 80 130 C90 120 110 130 120 120 C110 90 90 80 60 100 C70 90 50 80 40 80 Z' fill='%23688e5b'/><path d='M170 90 C140 70 120 90 130 120 C140 130 160 120 170 130 C150 140 140 150 150 160 C170 150 180 160 190 170 C200 160 210 150 230 160 C240 150 230 140 210 130 C220 120 240 130 250 120 C240 90 220 80 190 100 C200 90 180 80 170 90 Z' transform='scale(0.8) translate(50, 0)' fill='%2358804d'/><path d='M30 180 C10 170 0 190 10 210 C30 220 50 200 60 220 C80 200 90 180 70 190 C60 180 40 190 30 180 Z' fill='%238caf83'/><path d='M170 160 C150 140 130 150 140 170 C160 190 180 180 190 200 C210 180 220 160 200 150 C190 160 180 150 170 160 Z' fill='%234a6b40'/></svg>");
+    }
+
+    .floor-plant-right {
+      right: -5vw; bottom: -8vh; 
+      width: 35vw; max-width: 500px; height: 55vh;
+      background-position: bottom right;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-10 10 190 235'><path d='M45 240 L105 240 L115 160 L35 160 Z' fill='%23e6e1d6'/><path d='M75 160 Q50 100 30 80 M75 160 Q80 80 90 50 M75 160 Q110 110 130 90 M75 160 Q40 140 20 150 M75 160 Q120 150 140 160' fill='none' stroke='%234a6b40' stroke-width='3'/><path d='M30 80 C10 60 10 100 30 110 C50 120 60 100 30 80 Z' fill='%23688e5b'/><path d='M90 50 C60 20 60 80 90 90 C120 100 130 70 90 50 Z' fill='%237ba372'/><path d='M130 90 C100 70 100 120 130 130 C160 140 170 110 130 90 Z' fill='%2358804d'/><path d='M20 150 C0 130 0 170 20 180 C40 190 50 170 20 150 Z' fill='%238caf83'/><path d='M140 160 C120 140 120 180 140 190 C160 200 170 180 140 160 Z' fill='%234a6b40'/><path d='M60 110 C40 90 40 130 60 140 C80 150 90 130 60 110 Z' fill='%23688e5b'/><path d='M100 120 C80 100 80 150 100 160 C120 170 130 140 100 120 Z' fill='%237ba372'/></svg>");
+    }
+
+    .coffee-cup { width: 26px; height: 20px; background: #eef5f9; border-radius: 2px 2px 10px 10px; position: relative; margin-bottom: 2px; }
+    .coffee-cup::after { content: ''; position: absolute; right: -6px; top: 2px; width: 6px; height: 10px; border: 2.5px solid #d0d5d9; border-left: none; border-radius: 0 10px 10px 0; }
+    .book-stack { width: 40px; height: 22px; background: #8caf83; border-radius: 3px; position: relative; margin-bottom: 2px; }
+    .book-stack::before { content: ''; position: absolute; top: 7px; left: 0; width: 100%; height: 3px; background: #fff; opacity: 0.5; }
+
+    /* 📦 메인 씬 */
+    #main-scene {
+      position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+      width: 100%; max-width: 1250px; min-width: 1000px;
+      height: 100%; 
+      aspect-ratio: 16 / 9;
+    }
+
+/* 💡 1. 전등 전체: 클릭 커서와 디용! 바운스 효과 추가 */
+    .pendant-light { 
+      position: absolute; top: -10px; width: 140px; height: 190px; 
+      display: flex; flex-direction: column; align-items: center; z-index: 5; 
+      cursor: pointer; /* 마우스 올리면 손가락 모양으로 */
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
+    }
+    
+    /* 💡 클릭(터치)하는 순간 아래로 살짝 당겨지는 효과 */
+    .pendant-light:active {
+      transform: translateY(8px); 
+      transition: transform 0.1s ease-out; 
+    }
+
+    /* 전등 줄과 갓은 기존 코드 유지 */
+    .light-wire { width: 8px; height: 70px; background: #474f59; }
+    .light-base { width: 36px; height: 24px; background: #3b424a; clip-path: polygon(25% 0, 75% 0, 100% 100%, 0 100%); }
+    .light-shade-funnel { width: 140px; height: 50px; background: rgba(230, 230, 230, 0.9); clip-path: polygon(28% 0, 72% 0, 100% 100%, 0 100%); margin-top: -1px; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+    /* 💡 2. 전구: 기본 상태는 꺼져있음 (회색빛) */
+    .light-bulb { 
+      width: 44px; height: 22px; 
+      background: #d0d5d9; /* 꺼진 전구 색상 */
+      border-radius: 0 0 44px 44px; margin-top: -8px; z-index: 1; 
+      transition: background 0.3s, box-shadow 0.3s; /* 색상과 빛번짐이 부드럽게 바뀌도록 */
+    }
+
+    /* 💡 3. 빛줄기: 기본 상태는 투명도 0 (안 보임) */
+    .light-beam { 
+      position: absolute; bottom: -180px; width: 250px; height: 250px; 
+      background: radial-gradient(ellipse at top, var(--light-glow) 0%, transparent 70%); 
+      pointer-events: none; 
+      opacity: 0; /* 불 꺼짐 */
+      transition: opacity 0.3s ease-in-out; 
+    }
+
+    /* ⭐ 대망의 스위치 ON 상태 (.on 클래스가 추가되었을 때) ⭐ */
+    .pendant-light.on .light-bulb {
+      background: #fdc338; /* 노랗게 불 들어옴 */
+      box-shadow: 0 4px 15px rgba(253, 195, 56, 0.6); /* 전구 주변의 은은한 후광(Glow) */
+    }
+    
+    .pendant-light.on .light-beam {
+      opacity: 1; /* 아래로 퍼지는 빛줄기 짠! */
+    }
+
+/* 💡 수정된 코드 */
+#light-1 { left: 18%; } 
+#light-2 { left: 50%; margin-left: -70px; } /* 전등 너비(140px)의 절반만큼 왼쪽으로 옮겨 중앙 정렬 */
+#light-3 { right: 18%; }
+
+    /* 🪟 아치형 창문 구조 */
+    #arch-window {
+      position: absolute; left: 50%; top: 12%; transform: translateX(-50%);
+      width: 48%; max-width: 540px; height: 50%; 
+      border: 12px solid #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border-radius: 20vw 20vw 0 0; overflow: hidden;
+      background: #eef5f9; transition: background 3s ease; z-index: 1;
+    }
+    #window-sky { width: 100%; height: 100%; transition: background 3s; position: relative; }
+    #weather-layer { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; }
+    .win-h-bar { position: absolute; top: 35%; left: 0; width: 100%; height: 6px; background: #ffffff; z-index: 2; }
+    .win-v-bar { position: absolute; top: 35%; width: 6px; height: 65%; background: #ffffff; z-index: 2; }
+    .v1 { left: 16.6%; } .v2 { left: 33.3%; } .v3 { left: 50%; transform: translateX(-3px); } .v4 { left: 66.6%; } .v5 { left: 83.3%; }
+    .win-arch-inner { position: absolute; bottom: 65%; left: 50%; transform: translateX(-50%); width: 20%; aspect-ratio: 2/1; border: 6px solid #ffffff; border-bottom: none; border-radius: 50vw 50vw 0 0; z-index: 2; }
+    .win-spoke { position: absolute; background: #ffffff; z-index: 1; transform-origin: bottom center; }
+    .spoke-c { bottom: 65%; left: 50%; transform: translateX(-3px); width: 6px; height: 40%; }
+    .spoke-l { bottom: 65%; left: 50%; width: 6px; height: 45%; transform: translateX(-3px) rotate(-35deg); }
+    .spoke-r { bottom: 65%; left: 50%; width: 6px; height: 45%; transform: translateX(-3px) rotate(35deg); }
+
+    .window-sill {
+      position: absolute; left: 50%; top: 62%; transform: translateX(-50%);
+      width: 52%; max-width: 580px; height: 16px;
+      background: #c4b4a1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      z-index: 2;
+    }
+
+    /* 🖼️ 왼쪽 존 & 📻 오른쪽 존 */
+    #left-zone { position: absolute; left: 5%; top: 35%; display: flex; flex-direction: column; gap: 40px; align-items: center; z-index: 10; }
+    .wall-shelf { width: 200px; height: 12px; background: #c4b4a1; border-radius: 6px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+/* 1. 선반 위 아이템 컨테이너: 기존에 있던 padding-bottom: 2px; 제거 */
+.shelf-items { 
+  position: absolute; bottom: 100%; left: 0; width: 100%; 
+  display: flex; justify-content: space-around; align-items: flex-end; 
+}
+    .jar { width: 25px; height: 35px; background: #eef5f9; border-radius: 5px; }
+.shelf-plant { 
+  width: 60px; height: 70px; 
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 70"><path d="M15 70 L10 40 L50 40 L45 70 Z" fill="%23ffffff"/><circle cx="30" cy="25" r="15" fill="%23688e5b"/><circle cx="15" cy="35" r="10" fill="%234a6b40"/><circle cx="45" cy="30" r="12" fill="%234a6b40"/></svg>'); 
+  background-size: contain; background-repeat: no-repeat; background-position: bottom center; 
+}
+
+    .clipboard-mini { --box-bg: #736348; padding: 8px; width: 140px; height: 180px; cursor: pointer; display: flex; flex-direction: column; position: relative; transition: transform 0.2s; }
+    .clipboard-mini:hover { transform: translateY(-10px); }
+    .clip-top-mini { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 60px; height: 18px; background: #d0d5d9; border-radius: 4px; z-index: 10; }
+    .clip-top-mini::after { content: ''; position: absolute; bottom: -8px; left: 8px; right: 8px; height: 8px; background: #3b424a; border-radius: 0 0 4px 4px; }
+    .paper-mini { width: 100%; height: 100%; background: #fffaf0; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: repeating-linear-gradient(transparent, transparent 28px, rgba(139, 195, 74, 0.2) 28px, rgba(139, 195, 74, 0.2) 30px); }
+    .paper-mini h4 { font-size: 20px; color: var(--font-dark); margin-bottom: 5px; margin-top: 15px; }
+    .paper-mini p { font-size: 14px; color: #737373; text-align: center; line-height: 1.5; }
+
+    #right-zone { position: absolute; right: 5%; top: 40%; display: flex; flex-direction: column; align-items: center; z-index: 10; }
+    #radio-desk { width: 220px; height: 12px; background: #c4b4a1; border-radius: 6px; position: relative; display: flex; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    
+    /* 💡 라디오 클릭 영역 분리 반영 */
+#radio { 
+  position: absolute; bottom: 12px; width: 160px; height: 100px; 
+  background: #f5d069; border-radius: 8px; 
+  display: flex; flex-direction: column; padding: 12px;
+  transition: transform 0.2s; box-shadow: 2px 4px 8px rgba(0,0,0,0.1); 
+  /* cursor: pointer; 속성을 제거하여 전체 클릭을 방지합니다 */
+}
+#radio:hover { transform: translateY(-10px); }
+.radio-antenna { position: absolute; top: -30px; right: 15px; width: 4px; height: 40px; background: #a4adb5; border-radius: 2px; transform: rotate(15deg); }
+.radio-grill { width: 100%; height: 45px; background: #3b424a; border-radius: 4px; margin-bottom: auto; overflow: hidden; position: relative; }
+.radio-grill::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 6px); }
+.radio-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.radio-btns { display: flex; gap: 5px; }
+
+/* 💡 버튼 및 다이얼 상세 스타일 변경 */
+.radio-btn { width: 18px; height: 12px; background: #d0d5d9; border-radius: 2px; transition: transform 0.1s; }
+.setting-btn { background: #d0d5d9; cursor: pointer; } /* 설정 버튼 색상 및 커서 추가 */
+.setting-btn:hover { transform: scale(1.1); background: #f39c12; }
+
+.radio-dial { width: 24px; height: 24px; background: #fff; border-radius: 50%; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2); position: relative; transition: background 0.3s; cursor: pointer; }
+.radio-dial::after { content: ''; position: absolute; top: 4px; left: 11px; width: 2px; height: 8px; background: #a4adb5; border-radius: 1px; }
+.radio-dial.playing { animation: spin-dial 3s linear infinite; background: #fdc338; }
+@keyframes spin-dial { 100% { transform: rotate(360deg); } }
+
+    /* 🐾 고양이 */
+    .cafe-cat {
+      position: absolute; right: 16%; bottom: 12%; width: 130px; height: 160px; 
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -5 120 120'><path d='M80 105 C 110 105, 115 60, 100 50 C 92 45, 88 52, 92 60 C 100 75, 95 95, 80 95 Z' fill='%23333'/><path d='M20 105 C 5 65, 30 40, 50 40 C 70 40, 95 65, 85 105 C 80 112, 25 112, 20 105 Z' fill='%23333'/><circle cx='50' cy='38' r='23' fill='%23333'/><path d='M 32 22 Q 26 -2, 48 18 Z' fill='%23333'/><path d='M 68 22 Q 74 -2, 52 18 Z' fill='%23333'/><path d='M38 55 C45 80, 55 80, 62 55 C55 50, 45 50, 38 55 Z' fill='%23fff'/></svg>");
+      background-size: contain; background-repeat: no-repeat; background-position: bottom center;
+      z-index: 25; 
+      pointer-events: none;
+    }
+
+    .table-plant {
+      position: absolute; z-index: 22; 
+      background-size: contain; background-repeat: no-repeat; background-position: bottom center;
+      pointer-events: none;
+    }
+    .plant-left {
+      left: 10vw; bottom: -1vh; width: 220px; height: 140px; 
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 110'><path d='M40 110 L20 70 L180 70 L160 110 Z' fill='%23eef5f9'/><path d='M50 70 Q30 30 10 50 M80 70 Q70 20 100 20 M130 70 Q150 20 180 40 M160 70 Q190 60 190 80' fill='none' stroke='%234a6b40' stroke-width='4'/><path d='M10 50 C0 30 30 10 40 30 C50 50 20 60 10 50 Z' fill='%23688e5b'/><path d='M100 20 C80 0 130 0 120 20 C110 40 80 40 100 20 Z' fill='%237ba372'/><path d='M180 40 C170 10 200 20 190 40 C180 60 160 50 180 40 Z' fill='%2358804d'/><path d='M190 80 C180 60 210 70 200 90 C190 110 180 100 190 80 Z' fill='%238caf83'/><path d='M60 40 C40 20 80 10 70 30 C60 50 40 60 60 40 Z' fill='%238caf83'/></svg>");
+    }
+    .plant-right {
+      right: 15vw; bottom: -1vh; width: 190px; height: 130px;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 100'><path d='M45 100 L25 60 L135 60 L115 100 Z' fill='%23fffaf0'/><path d='M70 60 Q50 30 20 40 M90 60 Q110 20 140 30 M80 60 Q70 25 90 15' fill='none' stroke='%234a6b40' stroke-width='4'/><circle cx='20' cy='40' r='18' fill='%237ba372'/><circle cx='140' cy='30' r='20' fill='%23688e5b'/><circle cx='90' cy='15' r='14' fill='%238caf83'/><circle cx='50' cy='25' r='12' fill='%2358804d'/></svg>");
+    }
+
+    /* 👥 캐릭터 컨테이너 */
+    #standing-characters { position: absolute; bottom: 12%; left: 0; width: 100%; display: flex; justify-content: center; gap: 2%; z-index: 15; pointer-events: none; }
+    
+    .chair-back {
+      position: absolute; width: 280px; height: 220px; bottom: 0; 
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 190'><path d='M20 190 L20 70 Q20 10 120 10 Q220 10 220 70 L220 190 L200 190 L200 75 Q200 30 120 30 Q40 30 40 75 L40 190 Z' fill='%23c89b72'/><line x1='70' y1='30' x2='70' y2='190' stroke='%23dcb492' stroke-width='4'/><line x1='100' y1='20' x2='100' y2='190' stroke='%23dcb492' stroke-width='4'/><line x1='140' y1='20' x2='140' y2='190' stroke='%23dcb492' stroke-width='4'/><line x1='170' y1='30' x2='170' y2='190' stroke='%23dcb492' stroke-width='4'/></svg>");
+      background-size: contain; background-repeat: no-repeat; background-position: bottom center; 
+      z-index: 9; 
+      pointer-events: auto; 
+      cursor: pointer;
+      transition: transform 0.2s ease; 
+    }
+    .chair-back:hover { transform: translateY(-8px); }
+    
+    .standing-wrap { position: relative; width: 400px; height: 450px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; pointer-events: none; }
+/* 💡 2. 캐릭터 이미지 표시 영역 */
+    .standing { 
+      position: relative; overflow: hidden; width: 100%; height: 450px; border: none; background-color: transparent; border-radius: 40px 40px 0 0; display: flex; align-items: center; justify-content: center; 
+      background-size: cover; background-position: center 20%; background-repeat: no-repeat; z-index: 10; pointer-events: none; 
+      /* 💡 수정됨: 바운스 효과와 중심점(발) 고정 추가 */
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); 
+      transform-origin: bottom center; /* 찌그러질 때 발바닥은 고정하고 머리가 내려오도록! */
+    }
+    .standing.has-image { filter: drop-shadow(0px 8px 16px rgba(0,0,0,0.15)); }
+    .file-input { display: none; }
+
+    /* 💡 새로 추가: 캐릭터가 로드된 후, 딱 '위쪽 절반'에만 투명한 클릭 막 만들기 */
+    .standing.has-image::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 50%; /* 450px 중 위쪽 225px(머리 부근)만 차지 */
+      pointer-events: auto; /* ⭐ 여기만 클릭 가로채기! (아래쪽은 의자 클릭을 위해 비워둠) */
+      cursor: pointer;
+    }
+    
+    /* 💡 새로 추가: 머리(위쪽 절반)를 클릭했을 때 클리커처럼 디용! 찌그러지기 */
+    .standing.has-image:active {
+      transform: scaleY(0.9) scaleX(1.05); /* 세로축은 꾹 눌리고 가로축은 빵빵해짐 */
+      transition: transform 0.1s ease-out; /* 누를 때는 아주 빠르게! */
+    }
+
+    /* 🪑 반원형 테이블 */
+    #cafe-table {
+      position: absolute; bottom: 0%; left: 10%; width: 80%; height: 25%; 
+      z-index: 20; 
+    }
+    #cafe-table::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: #c4b4a1; border-radius: 50vw 50vw 0 0; box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+      pointer-events: none;
+    }
+
+    /* 💡 아이템 슬롯 */
+    .item-slot {
+      position: absolute; width: 140px; height: 140px;
+      display: flex; justify-content: center; align-items: center;
+      transition: filter 0.2s;
+      transform: translate(var(--rand-x, 0px), var(--rand-y, 0px));
+    }
+    .item-slot:hover { 
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.7)) brightness(1.1); 
+      z-index: 40 !important; 
+    }
+    .item-visual { width: 100%; height: 100%; transition: opacity 0.5s; }
+    
+    .slot-0 { left: calc(50% - 70px); top: -30%; z-index: 31; } 
+    .slot-1 { left: calc(30% - 70px); top: -15%; z-index: 33; } 
+    .slot-2 { left: calc(70% - 70px); top: -15%; z-index: 33; } 
+    .slot-3 { left: calc(15% - 70px); top: -20%; z-index: 34; } 
+    .slot-4 { left: calc(25% - 70px); top: 5%; z-index: 36; } 
+    .slot-5 { left: calc(50% - 70px); top: 10%; z-index: 36; } 
+    .slot-6 { left: calc(60% - 70px); top: 10%; z-index: 36; } 
+    
+    .progress-tooltip { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: #fff; padding: 5px 10px; border-radius: 8px; font-size: 16px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.1); color: var(--font-dark); z-index: 20; }
+    .item-slot:hover .progress-tooltip { opacity: 1; }
+    .reusable-slot { visibility: hidden; pointer-events: none; }
+
+    /* 🧾 모달 UI */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.3); z-index: 100; justify-content: center; align-items: center; }
+    .modal-overlay.open { display: flex; }
+    .clipboard-board { --box-bg: #736348; padding: 25px; width: 440px; border-radius: 8px; position: relative; }
+    .clip-top { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 120px; height: 35px; background: #d0d5d9; border-radius: 6px; z-index: 10; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+    .clip-top::after { content: ''; position: absolute; bottom: -10px; left: 10px; right: 10px; height: 12px; background: #3b424a; border-radius: 0 0 6px 6px; }
+    .clipboard-paper { background: #fffaf0; border-radius: 4px; padding: 45px 30px 30px; background-image: repeating-linear-gradient(transparent, transparent 38px, rgba(139, 195, 74, 0.2) 38px, rgba(139, 195, 74, 0.2) 40px); min-height: 400px; display: flex; flex-direction: column; align-items: center; }
+    .clipboard-paper h3 { font-size: 38px; color: var(--font-dark); margin-bottom: 25px; letter-spacing: 5px; }
+/* ❌ 닫기 버튼 (손으로 슥슥 그은 듯한 X) */
+    .close-x { 
+      position: absolute; top: 35px; right: 40px; 
+      width: 24px; height: 24px; /* 버튼의 터치/클릭 영역 크기 */
+      cursor: pointer; transition: transform 0.2s; z-index: 20; 
+    }
+    
+    /* 💡 가상 요소(::before, ::after)를 사용해 막대기 2개를 만듭니다 */
+    .close-x::before, .close-x::after {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      width: 110%; height: 4px; /* 막대기의 길이와 두께 */
+      background-color: var(--font-dark); 
+      border-radius: 4px; /* 끝을 둥글게 처리 */
+      transition: background-color 0.2s;
+    }
+    
+    /* 🎨 완벽한 45도가 아닌, 살짝 어긋난 각도를 주어 손그림 느낌을 살립니다 */
+    .close-x::before { transform: translate(-50%, -50%) rotate(42deg); }
+    .close-x::after { transform: translate(-50%, -50%) rotate(-48deg); }
+
+    /* 마우스 오버 시 효과 */
+    .close-x:hover { transform: scale(1.2); }
+    .close-x:hover::before, .close-x:hover::after { background-color: #e86868; }
+    .menu-list { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+    .menu-item { display: flex; align-items: center; width: 100%; font-size: 24px; color: var(--font-dark); cursor: pointer; transition: all 0.1s; padding: 5px; border-radius: 8px; }
+    .menu-item:hover { transform: translateY(-2px); color: #688e5b; background-color: rgba(139, 195, 74, 0.05); }
+    .item-name { white-space: nowrap; font-weight: normal; margin-left: 5px; }
+    .dotted-line { flex-grow: 1; border-bottom: 2px dotted #d0d5d9; margin: 0 10px; position: relative; top: -10px; opacity: 0.5; }
+    .item-price { white-space: nowrap; }
+    .check-area { min-width: 80px; text-align: right; color: #e86868; font-weight: bold; font-family: sans-serif; letter-spacing: 2px; }
+
+    .order-submit-btn { --box-bg: #eccc68; margin-top: 30px; padding: 15px 40px; font-size: 24px; color: var(--font-dark); cursor: pointer; font-family: inherit; transition: transform 0.1s; border:none; }
+    .order-submit-btn:hover { transform: translateY(-3px); }
+
+    .cafe-modal { --box-bg: var(--bg-accent); --box-radius: 8px; width: 350px; padding: 30px; text-align: center; display: flex; flex-direction: column; gap: 15px; position: relative; }
+    .cafe-modal h3 { margin: 0 0 10px 0; font-size: 28px; color: var(--font-dark); }
+    .cafe-modal input { padding: 12px; font-family: inherit; font-size: 16px; width: 100%; outline: none; border-radius: 8px; border: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+    .btn-row { display: flex; gap: 10px; }
+    .btn { padding: 12px; font-size: 20px; border-radius: 8px; cursor: pointer; font-family: inherit; flex: 1; transition: transform 0.1s; color: var(--font-dark); background: transparent; border: none; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn.play-btn { background: #fff; }
+    .btn.stop-btn { background: #fce4ec; }
+
+    #noti-bubble { --box-bg: #ffffff; --box-radius: 30px; position: fixed; top: 40px; left: 50%; transform: translateX(-50%) translateY(-20px); padding: 15px 30px; font-size: 26px; color: var(--font-dark); opacity: 0; transition: transform 0.4s ease, opacity 0.4s ease; z-index: 1000; pointer-events: none; }
+    #noti-bubble.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    #yt-hidden-frame { display: none; }
+/* 🎶 라디오에서 떠오르는 연한 흰색 음표 */
+    .music-note {
+      position: absolute;
+      top: 10px;
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.85); /* 연한 반투명 흰색 */
+      pointer-events: none; /* 클릭을 방해하지 않도록 설정 */
+      z-index: 30;
+      animation: floatNote 2s ease-out forwards;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15); /* 은은한 그림자 */
+    }
+
+    /* 💡 위로 떠오르며 옆으로 살짝 흔들리는 키프레임 애니메이션 */
+    @keyframes floatNote {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.6) rotate(0deg);
+      }
+      20% {
+        opacity: 0.9;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--note-x, 0px), -70px) scale(1.2) rotate(var(--note-rot, 15deg));
+      }
+    }
+/* 슬라이드 서랍장 기본 설정 (평소엔 화면 왼쪽 밖으로 숨김) */
+#icon-drawer {
+  position: absolute; top: 0; left: 0; width: 280px; height: 100vh;
+  background: rgba(255, 250, 240, 0.7); backdrop-filter: blur(8px);
+  box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+  transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000; display: flex; flex-direction: column;
+}
+
+/* 서랍장이 열렸을 때의 위치 */
+#icon-drawer.open {
+  transform: translateX(0);
+}
+
+/* 튀어나와 있는 여닫기 버튼 */
+#drawer-toggle {
+  position: absolute; right: -35px; top: 50%; transform: translateY(-50%);
+  width: 35px; height: 80px; background: rgba(255, 250, 240, 0.8);
+  border: none; border-radius: 0 12px 12px 0; box-shadow: 4px 0 8px rgba(0,0,0,0.05);
+  cursor: pointer; font-size: 18px; color: var(--font-dark);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* 내부 아이콘 정렬 */
+.drawer-content { 
+  padding: 40px 20px; display: grid; grid-template-columns: repeat(2, 1fr); 
+  gap: 25px; overflow-y: auto; height: 100%;
+}
+
+.shortcut-icon { 
+  display: flex; flex-direction: column; align-items: center; gap: 10px; 
+  cursor: pointer; transition: transform 0.2s; 
+}
+.shortcut-icon:hover { transform: translateY(-5px); }
+.shortcut-icon span { font-size: 15px; color: var(--font-dark); font-weight: bold; }
+
+.icon-img { width: 55px; height: 55px; background-size: contain; background-repeat: no-repeat; background-position: center; }
+
+/* SVG를 활용한 기본 아이콘 디자인 */
+.chrome { background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="%23fbbc05"/><path d="M50 5 L90 75 A45 45 0 0 1 10 75 Z" fill="%23ea4335"/><path d="M10 75 L50 95 A45 45 0 0 1 5 50 Z" fill="%2334a853"/><circle cx="50" cy="50" r="20" fill="%23fff"/><circle cx="50" cy="50" r="15" fill="%234285f4"/></svg>'); }
+.folder { background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M10 30 C10 20 20 20 20 20 L40 20 L50 35 L80 35 C90 35 90 45 90 45 L90 80 C90 90 80 90 80 90 L20 90 C10 90 10 80 10 80 Z" fill="%23f9d371"/><path d="M15 40 L85 40 L80 85 L20 85 Z" fill="%23fce29f"/></svg>'); }
+/* 프로그램 기본 아이콘 SVG */
+.program { background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="20" width="70" height="60" rx="5" fill="%23d0d5d9"/><rect x="15" y="20" width="70" height="15" rx="5" fill="%233b424a"/><circle cx="25" cy="27.5" r="3" fill="%23e86868"/><circle cx="35" cy="27.5" r="3" fill="%23fce94f"/><circle cx="45" cy="27.5" r="3" fill="%238caf83"/><path d="M40 45 L60 65 M60 45 L40 65" stroke="%233b424a" stroke-width="4" stroke-linecap="round"/></svg>'); }
+
+/* 아이콘 개별 래퍼 및 삭제 버튼 */
+.icon-wrapper { position: relative; display: flex; justify-content: center; }
+.delete-icon-btn {
+  position: absolute; top: -5px; right: -5px; width: 20px; height: 20px;
+  background: #e86868; color: white; font-size: 12px; border: none; border-radius: 50%;
+  cursor: pointer; display: none; align-items: center; justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 10; font-family: sans-serif; font-weight: bold;
+}
+.shortcut-icon:hover .delete-icon-btn { display: flex; } /* 마우스 올렸을 때만 삭제 버튼 보임 */  
+</style>
+</head>
+<body>
+<!-- 서랍장 컨테이너 (톱니바퀴 추가) -->
+<div id="icon-drawer">
+  <button id="drawer-toggle" onclick="toggleDrawer()">▶</button>
+  
+  <!-- 서랍장 헤더 (설정 버튼) -->
+  <div style="padding: 20px 20px 0; text-align: right;">
+    <button onclick="toggleModal('add-icon-modal', true)" style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--font-dark);" title="새 아이콘 추가">⚙️</button>
+  </div>
+
+  <!-- 아이콘들이 추가될 공간 (비워둡니다. JS가 알아서 채워요!) -->
+  <div class="drawer-content" id="drawer-item-list"></div>
+</div>
+
+<div class="modal-overlay" id="add-icon-modal">
+  <div class="cafe-modal hand-drawn-box">
+    <div class="close-x" onclick="toggleModal('add-icon-modal', false)"></div>
+    <h3>새 아이콘 등록</h3>
+    
+    <div style="text-align: left; margin-bottom: 10px;">
+      <p style="font-size: 14px; color:#737373; margin-bottom: 5px;">1. 기본 아이콘 종류</p>
+      <select id="new-icon-type" style="width:100%; padding:8px; border-radius:6px; border:none; box-shadow:inset 0 2px 4px rgba(0,0,0,0.05); font-family:inherit;">
+        <option value="folder">폴더 (문서, 사진 등)</option>
+        <option value="program">프로그램 (.exe)</option>
+        <option value="web">웹사이트 (http...)</option>
+      </select>
+    </div>
+
+    <div style="text-align: left; margin-bottom: 10px;">
+      <p style="font-size: 14px; color:#737373; margin-bottom: 5px;">2. 표시할 이름</p>
+      <input type="text" id="new-icon-name" placeholder="예: 내 작업 폴더">
+    </div>
+
+    <div style="text-align: left; margin-bottom: 15px;">
+      <p style="font-size: 14px; color:#737373; margin-bottom: 5px;">3. 윈도우 경로 또는 URL</p>
+      <input type="text" id="new-icon-path" placeholder="C:\Users\Desktop\작업물">
+    </div>
+
+    <!-- 💡 새롭게 추가된 커스텀 이미지 업로드 영역 -->
+    <div style="text-align: left; margin-bottom: 20px;">
+      <p style="font-size: 14px; color:#737373; margin-bottom: 5px;">4. 커스텀 아이콘 이미지 (선택)</p>
+      <input type="file" id="new-icon-image" accept="image/*" onchange="previewIcon(event)" style="font-size: 14px; width: 100%;">
+      <!-- 이미지를 미리 보여줄 작은 네모 박스 -->
+      <div id="icon-preview" style="width: 45px; height: 45px; margin-top: 10px; background-size: contain; background-repeat: no-repeat; background-position: center; display: none;"></div>
+    </div>
+
+    <button class="order-submit-btn hand-drawn-box" style="margin-top:0; padding:10px;" onclick="saveNewIcon()">등록하기</button>
+  </div>
+</div>
+  </div>
+</div>
+  <div id="cafe-container">
+    <div class="botanical floor-plant-left"></div>
+    <div class="botanical floor-plant-right"></div>
+
+    <div id="main-scene">
+<!-- 💡 각 전등을 클릭할 때마다 'on'이라는 이름표(클래스)를 붙였다 뗐다 하는 스위치 역할입니다 -->
+<div class="pendant-light" id="light-1" onclick="this.classList.toggle('on')"><div class="light-wire"></div><div class="light-base"></div><div class="light-shade-funnel"></div><div class="light-bulb"></div><div class="light-beam"></div></div>
+<div class="pendant-light" id="light-2" onclick="this.classList.toggle('on')"><div class="light-wire"></div><div class="light-base"></div><div class="light-shade-funnel"></div><div class="light-bulb"></div><div class="light-beam"></div></div>
+<div class="pendant-light" id="light-3" onclick="this.classList.toggle('on')"><div class="light-wire"></div><div class="light-base"></div><div class="light-shade-funnel"></div><div class="light-bulb"></div><div class="light-beam"></div></div>
+
+      <div id="arch-window">
+        <div id="window-sky"><div id="weather-layer"></div></div>
+        <div class="win-h-bar"></div><div class="win-v-bar v1"></div><div class="win-v-bar v2"></div><div class="win-v-bar v3"></div><div class="win-v-bar v4"></div><div class="win-v-bar v5"></div>
+        <div class="win-arch-inner"></div><div class="win-spoke spoke-c"></div><div class="win-spoke spoke-l"></div><div class="win-spoke spoke-r"></div>
+      </div>
+      <div class="window-sill"></div>
+
+      <div id="left-zone">
+        <div class="wall-shelf"><div class="shelf-items"><div class="shelf-plant"></div><div class="jar"></div></div></div>
+        <div id="menu-board" class="hand-drawn-box clipboard-mini" onclick="toggleModal('menu-modal', true)">
+          <div class="clip-top-mini"></div>
+          <div class="paper-mini">
+            <h4>메 뉴</h4>
+            <p>• 커피 / 음료<br>• 디저트<br><br><b>(주문하기)</b></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cafe-cat"></div>
+
+      <div id="right-zone">
+        <div class="wall-shelf" style="margin-bottom: 80px;"><div class="shelf-items"><div class="jar"></div><div class="shelf-plant"></div></div></div>
+        <div id="radio-desk">
+  <div id="radio">
+    <div class="radio-antenna"></div>
+    <div class="radio-grill"></div>
+    <div class="radio-controls">
+      <div class="radio-btns">
+        <!-- 💡 왼쪽 첫 번째 버튼을 '설정' 버튼으로 분리 -->
+        <div class="radio-btn setting-btn" onclick="toggleModal('yt-modal', true)" title="음악 링크 설정"></div>
+        <div class="radio-btn"></div>
+      </div>
+      <!-- 💡 다이얼을 재생/정지 스위치로 사용 -->
+      <div class="radio-dial" id="radio-dial-ui" onclick="toggleRadio()" title="재생/정지"></div>
+    </div>
+  </div>
+</div>
+      </div>
+
+      <div id="standing-characters">
+        <div class="standing-wrap">
+          <div class="chair-back" title="클릭해서 캐릭터 추가"></div>
+          <div class="standing" id="char-left">
+            <input type="file" class="file-input" accept="image/*" onchange="loadImage(event, 'char-left')">
+          </div>
+        </div>
+        <div class="standing-wrap">
+          <div class="chair-back" title="클릭해서 캐릭터 추가"></div>
+          <div class="standing" id="char-right">
+            <input type="file" class="file-input" accept="image/*" onchange="loadImage(event, 'char-right')">
+          </div>
+        </div>
+      </div>
+
+      <div id="cafe-table"></div>
+    </div> <!-- #main-scene 끝 -->
+
+    <div class="table-plant plant-left"></div>
+    <div class="table-plant plant-right"></div>
+  </div> <!-- #cafe-container 끝 -->
+
+  <div class="modal-overlay" id="menu-modal">
+    <div class="clipboard-board hand-drawn-box">
+      <div class="clip-top"></div>
+      <div class="clipboard-paper">
+        <div class="close-x" onclick="toggleModal('menu-modal', false)"></div>
+        <h3>메 뉴</h3>
+        <div class="menu-list"></div>
+        <button class="order-submit-btn hand-drawn-box" onclick="submitOrder()">주문하기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="yt-modal">
+    <div class="cafe-modal hand-drawn-box">
+      <div class="close-x" onclick="toggleModal('yt-modal', false)"></div>
+      <h3>라디오</h3>
+      <p style="font-size: 16px; margin: 0 0 10px 0; color:#737373;">유튜브 영상/재생목록 URL</p>
+      <input type="text" id="yt-url" placeholder="https://youtube.com/...">
+      <div class="btn-row">
+        <button class="btn play-btn hand-drawn-box" onclick="startMusic()">재생</button>
+        <button class="btn stop-btn hand-drawn-box" onclick="stopMusic()">정지</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="noti-bubble" class="hand-drawn-box"></div>
+  <div id="yt-hidden-frame"><div id="yt-player"></div></div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    const emptyDrinkSvg = `<svg viewBox="0 0 100 100" width="100%" height="100%"><path d="M25 40 L25 80 C25 95 75 95 75 80 L75 40 Z" fill="#eef5f9" /><ellipse cx="50" cy="40" rx="25" ry="10" fill="#eef5f9" /></svg>`;
+    const emptyPlateSvg = `<svg viewBox="0 0 100 100" width="100%" height="100%"><ellipse cx="50" cy="70" rx="40" ry="15" fill="#fffaf0" /></svg>`;
+
+    // 💡 1. 각 메뉴 데이터에 'scale' 속성 추가! 크기를 개별 조절할 수 있습니다.
+    const menuData = [
+      { 
+        name: '핸드드립 커피', price: '4,500', scale: 1.0, 
+        empty: `<svg viewBox="0 0 100 100" width="100%" height="100%"><ellipse cx="50" cy="80" rx="40" ry="12" fill="#ebe6df"/><path d="M75 45 C95 45 95 65 75 65" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/><path d="M20 40 L80 40 C80 65 65 75 50 75 C35 75 20 65 20 40 Z" fill="#fff"/><ellipse cx="50" cy="40" rx="30" ry="8" fill="#fff"/><ellipse cx="50" cy="65" rx="15" ry="5" fill="#ebe6df"/></svg>`, 
+        svg: `<svg viewBox="0 0 100 100" width="100%" height="100%"><ellipse cx="50" cy="80" rx="40" ry="12" fill="#ebe6df"/><path d="M75 45 C95 45 95 65 75 65" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/><path d="M20 40 L80 40 C80 65 65 75 50 75 C35 75 20 65 20 40 Z" fill="#fff"/><ellipse cx="50" cy="40" rx="30" ry="8" fill="#fff"/><ellipse cx="50" cy="41" rx="26" ry="6" fill="#5c3a21"/></svg>` 
+      },
+      { 
+        name: '따뜻한 홍차', price: '4,000', scale: 1.1,
+        empty: `<svg viewBox="0 0 100 100" width="100%" height="100%"><ellipse cx="50" cy="80" rx="42" ry="10" fill="#f4efea" stroke="#d4af37" stroke-width="2"/><ellipse cx="50" cy="78" rx="18" ry="4" fill="#e0d5c1"/><path d="M72 40 C95 30 95 60 72 70" fill="none" stroke="#d4af37" stroke-width="5" stroke-linecap="round"/><path d="M28 35 C28 55 35 75 50 75 C65 75 72 55 72 35 Z" fill="#fdfcfb"/><ellipse cx="50" cy="35" rx="22" ry="6" fill="#fdfcfb" stroke="#d4af37" stroke-width="2"/><circle cx="45" cy="55" r="4" fill="#e86868"/><circle cx="55" cy="58" r="3" fill="#e86868"/><path d="M42 52 C40 50 38 52 42 55 M50 60 C52 62 54 60 50 57" fill="none" stroke="#688e5b" stroke-width="2"/><ellipse cx="50" cy="65" rx="10" ry="3" fill="#ecd9c6"/></svg>`, 
+        svg: `<svg viewBox="0 0 100 100" width="100%" height="100%"><ellipse cx="50" cy="80" rx="42" ry="10" fill="#f4efea" stroke="#d4af37" stroke-width="2"/><ellipse cx="50" cy="78" rx="18" ry="4" fill="#e0d5c1"/><path d="M72 40 C95 30 95 60 72 70" fill="none" stroke="#d4af37" stroke-width="5" stroke-linecap="round"/><path d="M28 35 C28 55 35 75 50 75 C65 75 72 55 72 35 Z" fill="#fdfcfb"/><ellipse cx="50" cy="35" rx="22" ry="6" fill="#fdfcfb" stroke="#d4af37" stroke-width="2"/><ellipse cx="50" cy="36" rx="18" ry="4" fill="#c87a3f"/><circle cx="45" cy="55" r="4" fill="#e86868"/><circle cx="55" cy="58" r="3" fill="#e86868"/><path d="M42 52 C40 50 38 52 42 55 M50 60 C52 62 54 60 50 57" fill="none" stroke="#688e5b" stroke-width="2"/></svg>` 
+      },
+      { 
+        // 💡 2. 레몬에이드 크기 1.2배 확장 및 레몬 조각 Clip-path 마스크 처리
+        name: '레몬 에이드', price: '5,000', scale: 1.2, 
+        empty: `<svg viewBox="0 0 100 100" width="100%" height="100%"><polygon points="35,25 65,25 58,85 42,85" fill="#f0f5f7"/><path d="M45 80 L55 30 L75 25" fill="none" stroke="#4dd0e1" stroke-width="4" stroke-linecap="round"/><ellipse cx="50" cy="80" rx="6" ry="2" fill="#fce94f"/></svg>`, 
+        svg: `<svg viewBox="0 0 100 100" width="100%" height="100%">
+          <defs>
+            <!-- 왼쪽 절반(컵 바깥쪽) 영역만 보여주는 마스크 설정 -->
+            <clipPath id="left-lemon-clip">
+              <rect x="0" y="0" width="35" height="100"/>
+            </clipPath>
+            <!-- 여러 번 그리기 쉽게 레몬 그룹을 하나로 지정 -->
+            <g id="lemon-slice">
+              <circle cx="35" cy="35" r="15" fill="#ffeb3b" stroke="#fff" stroke-width="2"/>
+              <line x1="35" y1="20" x2="35" y2="50" stroke="#fff" stroke-width="1.5"/>
+              <line x1="20" y1="35" x2="50" y2="35" stroke="#fff" stroke-width="1.5"/>
+              <line x1="24" y1="24" x2="46" y2="46" stroke="#fff" stroke-width="1.5"/>
+              <line x1="24" y1="46" x2="46" y2="24" stroke="#fff" stroke-width="1.5"/>
+            </g>
+          </defs>
+          
+          <!-- 유리잔 베이스 및 음료액 -->
+          <polygon points="35,25 65,25 58,85 42,85" fill="#f0f5f7"/>
+          <polygon points="37,40 63,40 57,80 43,80" fill="#fce94f"/>
+          
+          <!-- 레몬 1번: 컵 전체에 걸쳐 그려지되, 투명도를 낮춰 반투명하게 (컵 안쪽 연출) -->
+          <use href="#lemon-slice" opacity="0.4"/>
+          <!-- 레몬 2번: 컵 바깥쪽만 100% 불투명하게 마스크를 씌워 덧그림 -->
+          <use href="#lemon-slice" clip-path="url(#left-lemon-clip)"/>
+          
+          <rect x="42" y="45" width="10" height="10" rx="2" fill="#fff" opacity="0.6"/>
+          <rect x="50" y="60" width="10" height="10" rx="2" fill="#fff" opacity="0.6"/>
+          <path d="M45 80 L55 30 L75 25" fill="none" stroke="#4dd0e1" stroke-width="4" stroke-linecap="round"/>
+        </svg>` 
+      },
+      { 
+        name: '구움과자 세트', price: '4,500', scale: 1.0, 
+        empty: `<svg viewBox="0 0 100 100" width="100%" height="100%"><ellipse cx="50" cy="80" rx="45" ry="12" fill="#fffaf0"/><circle cx="45" cy="75" r="1.5" fill="#a66a38"/><circle cx="60" cy="82" r="1" fill="#a66a38"/><circle cx="35" cy="80" r="1" fill="#a66a38"/></svg>`, 
+        svg: `<svg viewBox="0 0 100 100" width="100%" height="100%"><ellipse cx="50" cy="80" rx="45" ry="12" fill="#fffaf0"/><polygon points="45,55 75,45 85,55 55,65" fill="#a66a38"/><polygon points="45,55 55,65 50,75 40,65" fill="#8b5025"/><polygon points="55,65 85,55 80,65 50,75" fill="#8b5025"/><ellipse cx="38" cy="68" rx="16" ry="7" fill="#dcb472"/><ellipse cx="38" cy="66" rx="12" ry="4" fill="#fcd975"/><path d="M22 68 C22 76 54 76 54 68" fill="none" stroke="#c89b72" stroke-width="3"/><path d="M55 78 C45 88 75 98 85 88 C95 78 85 68 70 68 C55 68 65 68 55 78 Z" fill="#d49244"/><path d="M60 73 L67 85 M67 70 L75 80 M74 69 L80 76" fill="none" stroke="#a66a38" stroke-width="1.5" opacity="0.5"/></svg>` 
+      },
+      { 
+        name: '딸기 조각 케이크', price: '6,500', scale: 1.0, 
+        empty: `<svg viewBox="0 0 100 100" width="100%" height="100%"><ellipse cx="50" cy="80" rx="45" ry="10" fill="#fff"/><path d="M40 75 C45 70 55 70 60 75" fill="none" stroke="#fce4ec" stroke-width="4" stroke-linecap="round"/></svg>`, 
+        svg: `<svg viewBox="0 0 100 100" width="100%" height="100%">
+          <ellipse cx="50" cy="80" rx="45" ry="10" fill="#ededed"/>
+          <polygon points="20,76 80,76 80,46 20,46" fill="#fff"/>
+          <rect x="20" y="46" width="60" height="8" fill="#f5e1b5"/>
+          <rect x="20" y="54" width="60" height="2" fill="#e86868" opacity="0.8"/>
+          <path d="M22 68 C22 56 38 56 38 68 Z" fill="#e86868"/>
+          <path d="M42 68 C42 56 58 56 58 68 Z" fill="#e86868"/>
+          <path d="M62 68 C62 56 78 56 78 68 Z" fill="#e86868"/>
+          <rect x="20" y="68" width="60" height="5" fill="#f5e1b5"/>
+          <rect x="20" y="73" width="60" height="3" fill="#d4bd9d"/>
+          <path d="M20 46 C30 36 40 46 50 41 C60 36 70 46 80 46 Z" fill="#fff"/>
+          <path d="M42 42 C40 47 45 42 48 45 C51 42 56 47 58 42" fill="#688e5b"/>
+          <path d="M42 42 C40 27 60 27 58 42 Z" fill="#e86868"/>
+          <circle cx="48" cy="32" r="1" fill="#fff"/>
+          <circle cx="52" cy="35" r="1" fill="#fff"/>
+        </svg>` 
+      }
+    ];
+
+    let orderCounts = { 0:0, 1:0, 2:0, 3:0, 4:0 };
+
+    function renderMenu() {
+      const list = document.querySelector('.menu-list');
+      list.innerHTML = '';
+      menuData.forEach((item, index) => {
+        const count = orderCounts[index];
+        const checks = '✔'.repeat(count);
+        const div = document.createElement('div');
+        div.className = 'menu-item';
+        div.onclick = () => addOrder(index);
+        div.innerHTML = `<span class="item-name">${item.name}</span><span class="dotted-line"></span><span class="item-price">${item.price}</span><div class="check-area" onclick="removeOrder(event, ${index})">${checks}</div>`;
+        list.appendChild(div);
+      });
+    }
+
+    function addOrder(index) { 
+      const emptySlots = document.querySelectorAll('.empty-slot').length;
+      let currentTotalChecked = 0;
+      for (let key in orderCounts) currentTotalChecked += orderCounts[key];
+
+      if (currentTotalChecked >= emptySlots) {
+        showNotification(`현재 빈자리가 ${emptySlots}개뿐이라 더 체크할 수 없어요!`);
+        return;
+      }
+      if (orderCounts[index] < 5) { 
+        orderCounts[index]++; 
+        renderMenu(); 
+      } else { 
+        showNotification("하나의 메뉴는 5개까지만 주문 가능해요!"); 
+      } 
+    }
+
+    function removeOrder(e, index) { e.stopPropagation(); if (orderCounts[index] > 0) { orderCounts[index]--; renderMenu(); } }
+
+    const MAX_TABLE_ITEMS = 7;
+    
+    function initTableSlots() {
+      const table = document.getElementById('cafe-table');
+      table.innerHTML = ''; 
+      for(let i = 0; i < MAX_TABLE_ITEMS; i++) {
+        let slot = document.createElement('div');
+        slot.className = `item-slot slot-${i} empty-slot`;
+        table.appendChild(slot);
+      }
+    }
+
+    function submitOrder() {
+      let totalOrdered = 0;
+      for (let i = 0; i < menuData.length; i++) totalOrdered += orderCounts[i];
+
+      if (totalOrdered === 0) { 
+        showNotification("주문할 메뉴를 먼저 체크해 주세요!"); return; 
+      }
+
+      let delay = 0;
+      for (let i = 0; i < menuData.length; i++) {
+        if (orderCounts[i] > 0) {
+          for (let j = 0; j < orderCounts[i]; j++) { 
+            setTimeout(() => spawnItem(i), delay * 400); 
+            delay++;
+          }
+        }
+      }
+      
+      orderCounts = { 0:0, 1:0, 2:0, 3:0, 4:0 }; 
+      renderMenu(); 
+      toggleModal('menu-modal', false); 
+      showNotification(`${totalOrdered}개의 메뉴를 준비하는 중...`);
+    }
+
+    function getSmartSlot() {
+      const hasLeftChar = document.getElementById('char-left').classList.contains('has-image');
+      const hasRightChar = document.getElementById('char-right').classList.contains('has-image');
+      let priority = [1, 2, 5, 0, 3, 4, 6]; 
+
+      if (hasLeftChar && !hasRightChar) {
+        priority = [1, 3, 5, 0, 2, 4, 6]; 
+      } else if (!hasLeftChar && hasRightChar) {
+        priority = [2, 4, 5, 0, 1, 3, 6]; 
+      }
+
+      for (let i of priority) {
+        const slot = document.querySelector(`.slot-${i}.empty-slot`);
+        if (slot) return slot;
+      }
+      return null;
+    }
+
+    function spawnItem(index) {
+      const itemData = menuData[index];
+      let slot = getSmartSlot();
+      if (!slot) return; 
+
+      slot.classList.remove('empty-slot');
+      
+      const randX = (Math.random() * 30 - 15);
+      const randY = (Math.random() * 30 - 15);
+      slot.style.setProperty('--rand-x', `${randX}px`);
+      slot.style.setProperty('--rand-y', `${randY}px`);
+
+      // 💡 3. 새로 지정한 scale 속성을 인라인 스타일로 적용합니다 (안정감을 위해 transform-origin도 설정)
+      const scaleValue = itemData.scale || 1.0;
+      slot.innerHTML = `<div class="progress-tooltip">${itemData.name} (100%)</div>
+                        <div class="item-visual" style="transform: scale(${scaleValue}); transform-origin: bottom center;">${itemData.svg}</div>`;
+
+      let percent = 100;
+      const randomDuration = 30000 + Math.random() * 40000;
+      const stepDuration = randomDuration / 50; 
+
+      if(slot.drainInterval) clearInterval(slot.drainInterval);
+
+      slot.drainInterval = setInterval(() => {
+        percent -= 2;
+        if (percent <= 0) {
+          clearInterval(slot.drainInterval);
+          // 빈 그릇도 동일하게 스케일이 유지되도록 적용합니다
+          slot.querySelector('.item-visual').innerHTML = itemData.empty;
+          slot.querySelector('.progress-tooltip').innerText = `빈 그릇 (클릭해서 반납)`;
+          
+          slot.onclick = function() {
+            slot.innerHTML = '';
+            slot.classList.add('empty-slot'); 
+            slot.style.setProperty('--rand-x', '0px');
+            slot.style.setProperty('--rand-y', '0px');
+            slot.onclick = null; 
+            showNotification("빈 그릇을 치웠습니다!");
+          };
+        } else {
+          const tooltip = slot.querySelector('.progress-tooltip');
+          if (tooltip) tooltip.innerText = `${itemData.name} (${percent}%)`;
+        }
+      }, stepDuration);
+    }
+
+    document.querySelectorAll('.chair-back').forEach(el => { 
+      el.addEventListener('click', function() { 
+        this.nextElementSibling.querySelector('input').click(); 
+      }); 
+    });
+
+    // 💡 4. 로컬 스토리지를 활용한 이미지 업로드 저장
+    function loadImage(event, id) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const el = document.getElementById(id);
+          el.style.backgroundImage = `url('${e.target.result}')`;
+          el.classList.add('has-image');
+          
+          // 브라우저 캐시에 이미지 데이터 저장
+          try {
+            localStorage.setItem(`cafe_character_${id}`, e.target.result);
+          } catch(err) {
+            console.warn("용량 제한으로 이미지를 저장하지 못했습니다.");
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+      event.target.value = '';
+    }
+
+    // 💡 새로고침 시 저장된 이미지를 불러오는 함수
+    function loadSavedCharacters() {
+      ['char-left', 'char-right'].forEach(id => {
+        const savedImg = localStorage.getItem(`cafe_character_${id}`);
+        if (savedImg) {
+          const el = document.getElementById(id);
+          el.style.backgroundImage = `url('${savedImg}')`;
+          el.classList.add('has-image');
+        }
+      });
+    }
+
+    async function updateEnvironment() {
+      const lat = 37.831; const lon = 127.509;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=weather_code&daily=sunrise,sunset&timezone=Asia%2FSeoul`;
+      try {
+        const response = await fetch(url); const data = await response.json(); const now = new Date();
+        applySkyColor(now, new Date(data.daily.sunrise[0]), new Date(data.daily.sunset[0])); applyWeatherEffect(data.current.weather_code);
+      } catch (e) { const now = new Date(); applySkyColor(now, new Date(now).setHours(6,0,0), new Date(now).setHours(18,0,0)); }
+    }
+
+    function applySkyColor(now, r_time, s_time) {
+      const sky = document.getElementById('window-sky');
+      if (now >= r_time && now < new Date(r_time.getTime() + 2*3600000)) sky.style.background = "linear-gradient(to bottom, #d4c5e3, #f3d4d4, #f9eae1)";
+      else if (now >= new Date(r_time.getTime() + 2*3600000) && now < new Date(s_time.getTime() - 2*3600000)) sky.style.background = "linear-gradient(to bottom, #b5d5ee, #d8eafa, #f0f7f9)";
+      else if (now >= new Date(s_time.getTime() - 2*3600000) && now <= s_time) sky.style.background = "linear-gradient(to bottom, #f2b5a5, #f8d3b4, #faecd4)";
+      else sky.style.background = "linear-gradient(to bottom, #4a5d82, #6b7c9e, #8a9bbd)";
+    }
+
+    function applyWeatherEffect(code) {
+      const layer = document.getElementById('weather-layer'); layer.innerHTML = '';
+      if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) layer.style.background = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='15' height='30'><line x1='5' y1='0' x2='2' y2='25' stroke='rgba(255,255,255,0.5)' stroke-width='2'/></svg>") repeat`;
+      else if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) layer.style.background = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><circle cx='10' cy='10' r='2.5' fill='rgba(255,255,255,0.9)'/></svg>") repeat`;
+      else layer.style.background = "none";
+    }
+
+    function toggleModal(id, isOpen) { document.getElementById(id).classList.toggle('open', isOpen); }
+    function showNotification(text) { const bubble = document.getElementById('noti-bubble'); bubble.innerText = text; bubble.classList.add('show'); setTimeout(() => bubble.classList.remove('show'), 3000); }
+
+    let player;
+    function onYouTubeIframeAPIReady() { player = new YT.Player('yt-player', { height: '0', width: '0', playerVars: { autoplay: 1, controls: 0 }, events: { onStateChange: (e) => setRadioState(e.data === YT.PlayerState.PLAYING) } }); }
+// 💡 다이얼을 클릭하면 현재 상태에 따라 켜고 끄는 함수
+function toggleRadio() {
+  const dial = document.getElementById('radio-dial-ui');
+  // 다이얼이 회전 중(playing 클래스가 있음)이면 정지, 아니면 재생
+  if (dial.classList.contains('playing')) {
+    stopMusic();
+  } else {
+    startMusic();
+  }
+}
+
+// 💡 기존 startMusic() 함수를 아래 코드로 교체해 주세요.
+function startMusic() {
+  const urlInput = document.getElementById('yt-url');
+  let url = urlInput.value;
+  
+  // 🚀 비어있는 상태로 다이얼을 먼저 눌렀을 경우, 기본 로파이(Lofi) 음악 주소를 채워줍니다.
+  if (!url) {
+    url = "https://www.youtube.com/watch?v=jfKfPfyJRdk";
+    urlInput.value = url;
+  }
+  
+  let id = "", listId = ""; 
+  if (url.includes("list=")) listId = new URL(url).searchParams.get("list"); 
+  else id = url.split('v=')[1]?.substring(0, 11) || url.split('/').pop()?.substring(0, 11);
+  
+  if (player && typeof player.loadPlaylist === 'function') { 
+    if (listId) player.loadPlaylist({ list: listId, listType: 'playlist' }); 
+    else if (id) player.loadVideoById(id); 
+    showNotification("음악을 틀었어요."); 
+  }
+  toggleModal('yt-modal', false);
+}
+    function startMusic() {
+      const url = document.getElementById('yt-url').value; if (!url) return;
+      let id = "", listId = ""; if (url.includes("list=")) listId = new URL(url).searchParams.get("list"); else id = url.split('v=')[1]?.substring(0, 11) || url.split('/').pop()?.substring(0, 11);
+      if (player && typeof player.loadPlaylist === 'function') { if (listId) player.loadPlaylist({ list: listId, listType: 'playlist' }); else if (id) player.loadVideoById(id); showNotification("음악을 틀었어요."); }
+      toggleModal('yt-modal', false);
+    }
+    function stopMusic() { if (player && typeof player.stopVideo === 'function') { player.stopVideo(); showNotification("음악을 멈췄어요."); } setRadioState(false); toggleModal('yt-modal', false); }
+    
+// 💡 음표 생성 타이머를 관리할 변수
+    let noteInterval = null;
+
+    /* 💡 기존 setRadioState 함수 교체 */
+    function setRadioState(isPlaying) { 
+      const dial = document.getElementById('radio-dial-ui'); 
+      if (isPlaying) { 
+        dial.classList.add('playing'); 
+        startNotes(); // 🎵 음악 재생 시 음표 생성 시작
+      } else { 
+        dial.classList.remove('playing'); 
+        stopNotes();  // ⏹️ 정지 시 음표 생성 멈춤
+      } 
+    }
+
+    /* 💡 새로 추가: 음표를 일정 간격으로 찍어내는 함수 */
+    function startNotes() {
+      if (noteInterval) return;
+      const symbols = ['♪', '♫', '♬', '♩'];
+      const radio = document.getElementById('radio');
+
+      noteInterval = setInterval(() => {
+        if (!radio) return;
+        
+        const note = document.createElement('span');
+        note.className = 'music-note';
+        note.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+
+        // 음표마다 위치와 각도를 랜덤하게 부여해 자연스럽게 연출
+        const randomLeft = 15 + Math.random() * 70; // 라디오 가로 폭 안에서 랜덤 위치
+        const randomX = (Math.random() * 30 - 15);  // 좌우 흔들림 (-15px ~ +15px)
+        const randomRot = (Math.random() * 40 - 20) + 'deg'; // 회전 각도
+
+        note.style.left = `${randomLeft}%`;
+        note.style.setProperty('--note-x', `${randomX}px`);
+        note.style.setProperty('--note-rot', randomRot);
+
+        radio.appendChild(note);
+
+        // 애니메이션이 끝나면(2초 후) 생성된 음표 자동 삭제 (메모리 관리)
+        setTimeout(() => { note.remove(); }, 2000);
+      }, 500); // 0.5초마다 하나씩 생성
+    }
+
+    /* 💡 새로 추가: 음표 생성을 멈추고 잔여 음표를 지우는 함수 */
+    function stopNotes() {
+      if (noteInterval) {
+        clearInterval(noteInterval);
+        noteInterval = null;
+      }
+      document.querySelectorAll('.music-note').forEach(note => note.remove());
+    }
+
+    initTableSlots(); 
+    renderMenu(); 
+    updateEnvironment(); 
+    loadSavedCharacters(); // 💡 실행 시 저장된 캐릭터 불러오기 함수 호출
+    setInterval(updateEnvironment, 600000);
+function toggleDrawer() {
+  const drawer = document.getElementById('icon-drawer');
+  const btn = document.getElementById('drawer-toggle');
+  
+  // open 클래스가 있으면 제거하고, 없으면 추가합니다.
+  drawer.classList.toggle('open');
+  
+  // 서랍이 열려있는 상태면 ◀, 닫혀있으면 ▶ 로 화살표를 변경합니다.
+  if (drawer.classList.contains('open')) {
+    btn.innerText = '◀';
+  } else {
+    btn.innerText = '▶';
+  }
+}
+let savedIcons = JSON.parse(localStorage.getItem('cafe_custom_icons')) || [];
+let tempIconData = null; // 💡 업로드한 이미지를 임시로 담아둘 공간
+
+// 💡 1. 첨부한 이미지를 텍스트 데이터로 변환하고 미리보기 띄우기
+function previewIcon(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      tempIconData = e.target.result; // 변환된 데이터를 임시 저장
+      const preview = document.getElementById('icon-preview');
+      preview.style.backgroundImage = `url('${tempIconData}')`;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+// 💡 2. 서랍장에 아이콘 그리기 (커스텀 이미지가 있으면 덮어씌우기)
+function renderIcons() {
+  const list = document.getElementById('drawer-item-list');
+  list.innerHTML = ''; 
+
+  savedIcons.forEach((item, index) => {
+    const targetUrl = item.type === 'web' ? item.path : formatWindowsPath(item.path);
+    
+    // 커스텀 이미지가 존재하면 해당 이미지를 인라인 스타일로 적용
+    const customStyle = item.customIcon ? `style="background-image: url('${item.customIcon}');"` : '';
+    // 커스텀 이미지가 있다면 기본 CSS 클래스(folder 등)는 무시
+    const typeClass = item.customIcon ? '' : item.type; 
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'icon-wrapper';
+    wrapper.innerHTML = `
+      <div class="shortcut-icon">
+        <button class="delete-icon-btn" onclick="deleteIcon(${index})" title="삭제">X</button>
+        <div class="icon-img ${typeClass}" ${customStyle} onclick="window.open('${targetUrl}', '_blank')"></div>
+        <span onclick="window.open('${targetUrl}', '_blank')">${item.name}</span>
+      </div>
+    `;
+    list.appendChild(wrapper);
+  });
+}
+
+function formatWindowsPath(path) {
+  if (path.startsWith('file:///')) return path;
+  let formatted = path.replace(/\\/g, '/');
+  return `file:///${formatted}`;
+}
+
+// 💡 3. 아이콘 저장 기능 (tempIconData 포함)
+function saveNewIcon() {
+  const type = document.getElementById('new-icon-type').value;
+  const name = document.getElementById('new-icon-name').value.trim();
+  const path = document.getElementById('new-icon-path').value.trim();
+
+  if (!name || !path) {
+    showNotification("이름과 경로를 모두 입력해주세요!");
+    return;
+  }
+
+  // 데이터 배열에 저장 (커스텀 아이콘이 없으면 null 상태로 저장됨)
+  savedIcons.push({ type: type, name: name, path: path, customIcon: tempIconData });
+
+  try {
+    localStorage.setItem('cafe_custom_icons', JSON.stringify(savedIcons));
+  } catch(e) {
+    // 로컬 스토리지는 약 5MB의 용량 제한이 있어 너무 큰 이미지는 저장 실패할 수 있습니다.
+    showNotification("저장 공간 부족! 이미지 크기를 줄여주세요.");
+    savedIcons.pop(); 
+    return;
+  }
+
+  // 모달창 내부 텍스트 및 이미지 미리보기 초기화
+  document.getElementById('new-icon-name').value = '';
+  document.getElementById('new-icon-path').value = '';
+  document.getElementById('new-icon-image').value = '';
+  document.getElementById('icon-preview').style.display = 'none';
+  tempIconData = null;
+
+  toggleModal('add-icon-modal', false);
+  renderIcons();
+  showNotification("나만의 아이콘이 등록되었어요!");
+}
+
+function deleteIcon(index) {
+  savedIcons.splice(index, 1); 
+  localStorage.setItem('cafe_custom_icons', JSON.stringify(savedIcons)); 
+  renderIcons(); 
+}
+
+// 초기 렌더링 실행
+renderIcons();
+  </script>
+</body>
+</html>
